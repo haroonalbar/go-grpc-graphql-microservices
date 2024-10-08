@@ -5,5 +5,3 @@ type Account struct {
 	Name   string  `json:"name"`
 	Orders []Order `json:"orders"`
 }
-
-type Order struct{}
