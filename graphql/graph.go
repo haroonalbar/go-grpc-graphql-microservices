@@ -1,10 +1,10 @@
 package main
 
-// type Server struct {
-// 	accountClient *account.Client
-// 	catalogClient *catalog.Client
-// 	orderClient   *order.Client
-// }
+type Server struct {
+	// accountClient *account.Client
+	// catalogClient *catalog.Client
+	// orderClient   *order.Client
+}
 
 func NewGraphQLServer(accountUrl, catalogUrl, orderUrl string) (*Server, error) {
 	accountClient, err := account.NewClient(accountUrl)
@@ -27,9 +27,23 @@ func NewGraphQLServer(accountUrl, catalogUrl, orderUrl string) (*Server, error) 
 		return nil, err
 	}
 
-  return &Server{
-    accountClient
-    catalogClient
-    orderClient
-  }, nil
+	return &Server{
+		accountClient,
+		catalogClient,
+		orderClient,
+	}, nil
+}
+
+func (s *Server) Mutation() MutationResolver {
+	// from  mutation_resolver.go
+	return &mutationResolver{
+		server: s,
+	}
+}
+
+func (s *Server) Query() QueryResolver {
+	// from  query_resolver.go
+	return &queryResolver{
+		server: s,
+	}
 }
