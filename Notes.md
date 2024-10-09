@@ -1,0 +1,5 @@
+- Define graphql schema
+- Define account model
+- Generate graphql with gqlgen
+- Define all mutation , query and resolvers
+-
