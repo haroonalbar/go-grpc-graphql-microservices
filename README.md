@@ -1,5 +1,10 @@
 # Microservices in Go with gRPC , Graphql
 
+Here we are using monorepo kind of Microservices cause all of the Microservices
+in this project are identical and they all use pretty much the same packages.
+So it's ideal for this use case.
+Which might not be ideal for every case of using Microservices.
+
 - Generate Graphql
 
 ```bash
