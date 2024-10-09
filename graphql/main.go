@@ -36,8 +36,16 @@ func main() {
 	if err != nil {
 		log.Fatalf("Error setting Graphql server: %v", err)
 	}
+
+	// NOTE:
+	// updated to new serve mux instead of default one
+	mux := http.NewServeMux()
+
 	// sets up the main GraphQL endpoint where clients can send queries and mutations.
-	http.Handle("/graphql", handler.GraphQL(s.ToExecutableSchema()))
+	mux.Handle("/graphql", handler.GraphQL(s.ToExecutableSchema()))
 	// provides a web-based GraphQL Playground interface for easy testing and exploration of the GraphQL API.
-	http.Handle("/playground", handler.Playground("play", "/graphql"))
+	mux.Handle("/playground", handler.Playground("play", "/graphql"))
+
+	// Run server
+	log.Fatal(http.ListenAndServe(":8080", mux))
 }
