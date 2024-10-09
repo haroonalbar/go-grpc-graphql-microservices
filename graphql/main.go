@@ -36,8 +36,8 @@ func main() {
 	if err != nil {
 		log.Fatalf("Error setting Graphql server: %v", err)
 	}
-
+	// sets up the main GraphQL endpoint where clients can send queries and mutations.
 	http.Handle("/graphql", handler.GraphQL(s.ToExecutableSchema()))
-	// graphql has a playground ui to run queries and mutations
+	// provides a web-based GraphQL Playground interface for easy testing and exploration of the GraphQL API.
 	http.Handle("/playground", handler.Playground("play", "/graphql"))
 }
