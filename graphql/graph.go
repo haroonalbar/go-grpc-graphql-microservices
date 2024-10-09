@@ -54,7 +54,7 @@ type Server struct {
 // 		server: s,
 // 	}
 // }
-//
+// // ToExecutableSchema is converting the Server instance into an executable GraphQL schema.
 // func (s *Server) ToExecutableSchema() graphql.ExecutableSchema {
 // 	return NewExecutableSchema(Config{
 // 		// server matches ResolverRoot interface in graphql
