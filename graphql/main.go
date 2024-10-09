@@ -4,7 +4,9 @@ import (
 	"log"
 	"net/http"
 
-	"github.com/99designs/gqlgen/handler"
+	"github.com/99designs/gqlgen/graphql/handler"
+	"github.com/99designs/gqlgen/graphql/playground"
+
 	"github.com/kelseyhightower/envconfig"
 )
 
@@ -42,9 +44,9 @@ func main() {
 	mux := http.NewServeMux()
 
 	// sets up the main GraphQL endpoint where clients can send queries and mutations.
-	mux.Handle("/graphql", handler.GraphQL(s.ToExecutableSchema()))
+	mux.Handle("/graphql", handler.NewDefaultServer(s.ToExecutableSchema()))
 	// provides a web-based GraphQL Playground interface for easy testing and exploration of the GraphQL API.
-	mux.Handle("/playground", handler.Playground("play", "/graphql"))
+	mux.Handle("/playground", playground.Handler("play", "/graphql"))
 
 	// Run server
 	log.Fatal(http.ListenAndServe(":8080", mux))
