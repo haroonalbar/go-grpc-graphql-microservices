@@ -31,7 +31,7 @@ type Account struct{
 // maintainable, and scalable application structure.
 
 type Service interface{
-	PostAccout (ctx context.Context, name string) (*Account, error)
+	PostAccount (ctx context.Context, name string) (*Account, error)
 	GetAccount (ctx context.Context, id string) (*Account, error)
 	GetAccounts (ctx context.Context, skip uint64, take uint64) ([]Account, error)
 }
@@ -40,7 +40,8 @@ type accountService struct{
 	repository Repository
 }
 
-func(s *accountService) PostAccout (ctx context.Context, name string) (*Account, error){
+
+func(s *accountService) PostAccount (ctx context.Context, name string) (*Account, error){
 	// creates new id using ksuid
 	a := Account{ID: ksuid.New().String(), Name: name}
 	
