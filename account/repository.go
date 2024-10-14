@@ -7,15 +7,28 @@ import (
 	_ "github.com/lib/pq" // postgres driver
 )
 
-type Account struct {
-	ID   string
-	Name string
-}
-
 // The Repository pattern is a design pattern used to abstract the data access layer from the business logic layer in an application.
-// By using this pattern, we create a more robust, maintainable, and scalable application architecture.
-//
 // The Repository interface and its implementation (postgresRepository) serve several important purposes:
+//
+// 1. Separation of Concerns: It isolates the data access logic from the rest of the application,
+//    making it easier to maintain and modify the data layer without affecting other parts of the system.
+// 2. Abstraction: It provides a clean, abstract interface for data operations, hiding the complexities
+//    of database interactions from the rest of the application.
+// 3. Testability: By abstracting the data access, it becomes easier to mock the repository for unit testing
+//    other parts of the application that depend on data access.
+// 4. Flexibility: It allows for easy switching between different data sources (e.g., from a relational
+//    database to a NoSQL database) without changing the application's business logic.
+// 5. Centralized Data Logic: It provides a centralized place to implement data access logic, promoting
+//    code reuse and reducing duplication.
+// 6. Type Safety: By defining specific methods for data operations, it provides type safety and
+//    reduces the likelihood of runtime errors due to incorrect SQL queries.
+// 7. Performance Optimization: It allows for the implementation of caching strategies and query optimizations
+//    in a centralized location.
+// 8. Transactional Control: It provides a natural place to implement transaction management for operations
+//    that span multiple database calls.
+//
+// By implementing these patterns and principles, we create a more modular, maintainable, and scalable
+// application architecture that can easily adapt to changing requirements and technologies.
 
 type Repository interface {
 	Close()
