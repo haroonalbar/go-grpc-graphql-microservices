@@ -14,7 +14,7 @@ go run github.com/99designs/gqlgen generate
 
 > Graphql is the entry point of the Microservices
 
-### Top level general understanding
+### Top down general control flow
 
 ```
 From graphql mutation or query ->
