@@ -7,8 +7,8 @@ import (
 	_ "github.com/lib/pq" // postgres driver
 )
 
-// The Repository pattern is a design pattern used to abstract the data access layer from the business logic layer in an application.
 // The Repository interface and its implementation (postgresRepository) serve several important purposes:
+// The Repository pattern is a design pattern used to abstract the ** Data access layer ** from the business logic layer (service) in an application.
 //
 // 1. Separation of Concerns: It isolates the data access logic from the rest of the application,
 //    making it easier to maintain and modify the data layer without affecting other parts of the system.
