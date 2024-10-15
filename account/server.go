@@ -1,7 +1,3 @@
-// old // go:generate protoc --go_out=pb --go_opt=paths=source_relative --go-grpc_out=pb --go-grpc_opt=paths=source_relative account.proto
-//
-// old // go:generate protoc --go_out=./pb --go-grpc_out=./pb account.proto
-//
 //go:generate protoc --go_out=. --go-grpc_out=. account.proto
 package account
 
@@ -20,16 +16,17 @@ import (
 
 // This struct embeds a Service interface, which likely defines the actual business logic for account operations.
 type grpcServer struct {
+	pb.UnimplementedAccountServiceServer
 	service Service
 }
 
 // TODO:
-// lot of things unfinished like pb which should be taken from generated code
+// fix error on RegisterAccountServiceServer
 
 // This function sets up and starts the gRPC server
 func ListenGRPC(s Service, port int) error {
 	// It creates a TCP listener on the specified port.
-	lis, err := net.Listen("tcp", fmt.Sprintf(":$d", port))
+	lis, err := net.Listen("tcp", fmt.Sprintf(":%d", port))
 	if err != nil {
 		return err
 	}
@@ -38,7 +35,7 @@ func ListenGRPC(s Service, port int) error {
 	serv := grpc.NewServer()
 	// Registers the server for reflection (useful for debugging and service discovery).
 	reflection.Register(serv)
-	pb.RegisterAccountServiceServer(serv, &grpcServer{s})
+	pb.RegisterAccountServiceServer(serv, &grpcServer{service: s})
 	// Starts serving gRPC requests.
 	return serv.Serve(lis)
 }
@@ -87,5 +84,3 @@ func (s *grpcServer) GetAccounts(ctx context.Context, r *pb.GetAccountsRequest) 
 		Accounts: accounts,
 	}, nil
 }
-
-func (s *grpcServer) mustEmbedUnimplementedAccountServiceServer() {}
