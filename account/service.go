@@ -61,6 +61,6 @@ func (s *accountService) GetAccounts(ctx context.Context, skip uint64, take uint
 	return s.repository.ListAccounts(ctx, skip, take)
 }
 
-func newService(r Repository) Service {
+func NewService(r Repository) Service {
 	return &accountService{r}
 }
