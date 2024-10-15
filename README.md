@@ -32,5 +32,9 @@ database
 >
 
 ```sh
-
+# go:generate for protoc is defined on account/server.go
+go generate # for generating pb files
 ```
+
+> [!NOTE]
+> create pb folder if it's not already there

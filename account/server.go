@@ -20,9 +20,6 @@ type grpcServer struct {
 	service Service
 }
 
-// TODO:
-// fix error on RegisterAccountServiceServer
-
 // This function sets up and starts the gRPC server
 func ListenGRPC(s Service, port int) error {
 	// It creates a TCP listener on the specified port.
