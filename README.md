@@ -7,7 +7,7 @@ Which might not be ideal for every case of using Microservices.
 
 - Generate Graphql
 
-```bash
+```sh
 cd graphql
 go run github.com/99designs/gqlgen generate
 ```
@@ -23,4 +23,14 @@ server of Microservices ->
 service of Microservices ->
 repository of Microservices ->
 database
+```
+
+>Protobuff
+>
+>- Install protoc
+>- Install both plugins protoc-gen-go-grpc and protoc-gen-go
+>
+
+```sh
+
 ```
