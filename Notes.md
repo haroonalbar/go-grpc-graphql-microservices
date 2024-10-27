@@ -1,8 +1,0 @@
-- Define graphql schema
-- Define account model
-- Generate graphql with gqlgen
-- Define all mutation , query and resolvers
-- setup graphql schema executable using server instance
-- popluate config using envconfig
-- use config to serve graphqlserver using NewGraphQLServer
-- handle graphql endpoints for graphql and playgorung form gqlgen/handler
