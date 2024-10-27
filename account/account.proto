@@ -2,8 +2,6 @@ syntax = "proto3";
 
 package pb;
 
-// option go_package = ".";
-//option go_package = "github.com/haroonalbar/go-grpc-graphql-microservices/account/pb";
 option go_package = "./pb";
 
 message Account {
