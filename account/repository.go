@@ -78,17 +78,17 @@ func (r *postgresRepository) ListAccounts(ctx context.Context, skip uint64, take
 	}
 
 	defer rows.Close()
-	accounts:= []Account{}
-	for rows.Next(){
-		a:= &Account{}
+	accounts := []Account{}
+	for rows.Next() {
+		a := &Account{}
 		if err = rows.Scan(&a.ID, &a.Name); err == nil {
 			accounts = append(accounts, *a)
 		}
 	}
-	if err = rows.Err(); err != nil{
+	if err = rows.Err(); err != nil {
 		return nil, err
 	}
-	return accounts,nil
+	return accounts, nil
 }
 
 func NewPostgresRepository(url string) (Repository, error) {
