@@ -75,3 +75,7 @@ go generate # for generating pb files
 ```
 
 - account microservice built from repository to service to server to client level
+
+- catalog setup
+- no db.dockerfile cause will be using elastic search
+- [elastic](https://www.elastic.co/guide/en/elasticsearch/client/go-api/current/overview.html)
