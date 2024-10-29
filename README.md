@@ -79,3 +79,6 @@ go generate # for generating pb files
 - catalog setup
 - no db.dockerfile cause will be using elastic search
 - [elastic](https://www.elastic.co/guide/en/elasticsearch/client/go-api/current/overview.html)
+- should use offical go client for elasticsearch
+[elasticsearch](https://github.com/elastic/go-elasticsearch)
+[depricated](https://github.com/olivere/elastic/)
