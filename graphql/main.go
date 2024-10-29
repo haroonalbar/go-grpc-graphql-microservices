@@ -25,8 +25,7 @@ type AppConfig struct {
 func main() {
 	var cfg AppConfig
 	// Process populates the specified struct based on environment variables
-	// TODO:
-	// - envconfig no longer mainted change the implementation
+	// TODO: envconfig no longer mainted change the implementation
 	err := envconfig.Process("", &cfg)
 	if err != nil {
 		log.Fatalf("Error populating env : %v", err)
@@ -39,8 +38,7 @@ func main() {
 		log.Fatalf("Error setting Graphql server: %v", err)
 	}
 
-	// NOTE:
-	// updated to new serve mux instead of default one
+	// NOTE: updated to new serve mux instead of default one
 	mux := http.NewServeMux()
 
 	// sets up the main GraphQL endpoint where clients can send queries and mutations.

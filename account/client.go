@@ -7,8 +7,7 @@ import (
 	"google.golang.org/grpc"
 )
 
-// NOTE:
-// This will used from the graphql/Server struct
+// NOTE: This will used from the graphql/Server struct
 // As per the flow graphql to client to server to service to repository to db
 // So this Client is used by graphql to intact with account Microservice
 type Client struct {
