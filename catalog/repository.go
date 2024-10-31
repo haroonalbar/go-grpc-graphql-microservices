@@ -7,8 +7,8 @@ import (
 	"errors"
 	"fmt"
 
-	"github.com/elastic/go-elasticsearch"
-	"github.com/olivere/elastic"
+	"github.com/elastic/go-elasticsearch/v8"
+	"gopkg.in/olivere/elastic.v5"
 )
 
 type productDocument struct {
@@ -43,18 +43,18 @@ type Repository interface {
 type elasticRepository struct {
 	client *elasticsearch.Client
 	// // depricated
+	// renamed to clientdep for continuation with the vid
 	clientdep *elastic.Client
 }
 
 func (r *elasticRepository) Close() {}
 
 func (r *elasticRepository) PutProduct(ctx context.Context, p Product) error {
-	jsonBody, err := json.Marshal(
-		productDocument{
-			Name:        p.Name,
-			Description: p.Description,
-			Price:       p.Price,
-		})
+	jsonBody, err := json.Marshal(productDocument{
+		Name:        p.Name,
+		Description: p.Description,
+		Price:       p.Price,
+	})
 	if err != nil {
 		return fmt.Errorf("Failed to marshal product: %w", err)
 	}
@@ -63,7 +63,7 @@ func (r *elasticRepository) PutProduct(ctx context.Context, p Product) error {
 	res, err := r.client.Index(
 		"catalog",
 		bytes.NewReader(jsonBody),
-		r.client.Index.WithDocumentType("product"),
+		// r.client.Index.WithDocumentType("product"),
 		r.client.Index.WithDocumentID(p.ID),
 		r.client.Index.WithContext(ctx),
 	)
@@ -99,8 +99,8 @@ func (r *elasticRepository) GetProductByID(ctx context.Context, id string) (*Pro
 	res, err := r.client.Get(
 		"catalog",
 		id,
-		r.client.Get.WithDocumentType("porduct"),
 		r.client.Get.WithContext(ctx),
+		// r.client.Get.WithDocumentType("porduct"),
 	)
 	if err != nil {
 		return nil, fmt.Errorf("Failed to get product: %w", err)
@@ -133,18 +133,17 @@ func (r *elasticRepository) GetProductByID(ctx context.Context, id string) (*Pro
 		Price:       response.Source.Price,
 	}, nil
 
+	// // Another way
 	// // Parse the response body
 	// var result map[string]interface{}
 	// if err := json.NewDecoder(res.Body).Decode(&result); err != nil {
 	// 	return nil, fmt.Errorf("Error parsing response body: %w", err)
 	// }
-
 	// // Extract the _source field
 	// source, ok := result["_source"].(map[string]interface{})
 	// if !ok {
 	// 	return nil, fmt.Errorf("_source not found in response")
 	// }
-
 	// return &Product{
 	// 	ID:          id,
 	// 	Name:        source["name"].(string),
@@ -152,7 +151,7 @@ func (r *elasticRepository) GetProductByID(ctx context.Context, id string) (*Pro
 	// 	Price:       source["price"].(string),
 	// }, nil
 
-	// // depricated
+	// // Depricated
 	// res, err := r.client.Get().Index("catalog").Type("product").Id(id).Do(ctx)
 	// if err != nil {
 	// 	return nil, err
@@ -161,12 +160,10 @@ func (r *elasticRepository) GetProductByID(ctx context.Context, id string) (*Pro
 	// if !res.Found {
 	// 	return nil, ErrNotFound
 	// }
-
 	// p := productDocument{}
 	// if err := json.Unmarshal(*res.Source, &p); err != nil {
 	// 	return nil, err
 	// }
-
 	// return &Product{
 	// 	ID:          id,
 	// 	Name:        p.Name,
@@ -176,7 +173,92 @@ func (r *elasticRepository) GetProductByID(ctx context.Context, id string) (*Pro
 }
 
 func (r *elasticRepository) ListProducts(ctx context.Context, skip uint64, take uint64) ([]Product, error) {
-	r.
+
+	// // Create the search query
+	// // SearchRequest configures the Search API request.
+	// query := map[string]interface{}{
+	// 	"query": map[string]interface{}{
+	// 		"match_all": map[string]interface{}{},
+	// 	},
+	// 	"from": int(skip),
+	// 	"size": int(take),
+	// }
+
+	// // Convert query to JSON
+	// var buf bytes.Buffer
+	// if err := json.NewEncoder(&buf).Encode(query); err != nil {
+	// 	return nil, fmt.Errorf("Error encoding query: %w", err)
+	// }
+
+	// Perform the search request
+	res, err := r.client.Search(
+		r.client.Search.WithContext(ctx),
+		r.client.Search.WithIndex("catalog"),
+		r.client.Search.WithSearchType("product"),
+		// r.client.Search.WithBody(&buf),
+		// WARN: Can i use the below code instead of teh WithBody ??
+		r.client.Search.WithFrom(int(skip)),
+		r.client.Search.WithSize(int(take)),
+		r.client.Search.WithQuery("match_all"),
+	)
+	if err != nil {
+		return nil, fmt.Errorf("Error while performing search: %w", err)
+	}
+	defer res.Body.Close()
+
+	// Parse the response
+	var result struct {
+		Hits struct {
+			Hits []struct {
+				ID     string          `json:"_id"`
+				Source productDocument `json:"_source"`
+			} `json:"hits"`
+		} `json:"hits"`
+	}
+
+	if err := json.NewDecoder(res.Body).Decode(&result); err != nil {
+		return nil, fmt.Errorf("Error parsing response: %w", err)
+	}
+
+	// Convert hits to products
+	products := make([]Product, 0, len(result.Hits.Hits))
+
+	for _, hit := range result.Hits.Hits {
+		products = append(products, Product{
+			ID:          hit.ID,
+			Name:        hit.Source.Name,
+			Description: hit.Source.Description,
+			Price:       hit.Source.Price,
+		})
+	}
+
+	return products, nil
+
+	// // Depricated
+	// res, err := r.clientdep.Search().
+	// 	Index("catalog")
+	// 	Type("product").
+	// 	Query(elastic.NewMatchAllQuery()).
+	// 	From(int(skip)).
+	// 	Size(int(take)).Do(ctx)
+	// if err != nil {
+	// 	return nil, err
+	// }
+	//
+	// products := []Product{}
+	// for _, hit := range res.Hits.Hits {
+	// 	p := productDocument{}
+	// 	if err = json.Unmarshal(*hit.Source, &p); err == nil {
+	// 		products = append(products, Product{
+	// 			ID:          hit.Id,
+	// 			Name:        p.Name,
+	// 			Description: p.Description,
+	// 			Price:       p.Price,
+	// 		})
+	// 	}
+	// }
+	//
+	// return products, nil
 }
 
 func (r *elasticRepository) ListProductsWithIDs(ctx context.Context, ids []string) ([]Product, error) {
@@ -191,29 +273,38 @@ func NewElasticRepository(url string) (Repository, error) {
 	// official
 	// by default will use port 9200
 	// and [http.DefaultTransport]
-	client, err := elasticsearch.NewClient(elasticsearch.Config{})
+	es, err := elasticsearch.NewClient(elasticsearch.Config{})
+	if err != nil {
+		return nil, err
+	}
+
+	res, err := es.Info()
+	if err != nil {
+		return nil, err
+	}
+
+	fmt.Print(res)
+
+	// return &elasticRepository{
+	// 	client: es,
+
+	// }, nil
+
+	// not official
+	client, err := elastic.NewClient(
+		// SetURL defines the URL endpoints of the Elasticsearch nodes.
+		elastic.SetURL(url),
+		// "sniffing" in the context of Elasticsearch client libraries,
+		// it refers to the ability of these clients to dynamically discover and connect to nodes in an Elasticsearch cluster.
+		// This feature helps clients maintain connections to the cluster even if individual nodes change or become unavailable.
+		elastic.SetSniff(false),
+	)
 	if err != nil {
 		return nil, err
 	}
 
 	return &elasticRepository{
-		client: client,
+		client:    es,
+		clientdep: client,
 	}, nil
-
-	// // not official
-	// client, err := elastic.NewClient(
-	// 	// SetURL defines the URL endpoints of the Elasticsearch nodes.
-	// 	elastic.SetURL(url),
-	// 	// "sniffing" in the context of Elasticsearch client libraries,
-	// 	// it refers to the ability of these clients to dynamically discover and connect to nodes in an Elasticsearch cluster.
-	// 	// This feature helps clients maintain connections to the cluster even if individual nodes change or become unavailable.
-	// 	elastic.SetSniff(false),
-	// )
-	// if err != nil {
-	// 	return nil, err
-	// }
-
-	// return &elasticRepository{
-	// 	client: client,
-	// }, nil
 }

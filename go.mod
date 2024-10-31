@@ -4,7 +4,6 @@ go 1.23.1
 
 require (
 	github.com/99designs/gqlgen v0.17.55
-	github.com/elastic/go-elasticsearch v0.0.0
 	github.com/elastic/go-elasticsearch/v8 v8.15.0
 	github.com/kelseyhightower/envconfig v1.4.0
 	github.com/lib/pq v1.10.9
