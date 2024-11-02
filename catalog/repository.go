@@ -262,7 +262,95 @@ func (r *elasticRepository) ListProducts(ctx context.Context, skip uint64, take 
 }
 
 func (r *elasticRepository) ListProductsWithIDs(ctx context.Context, ids []string) ([]Product, error) {
-	panic("")
+
+	// Prepare the request body docs
+	docs := make([]map[string]string, len(ids))
+	for i, id := range ids {
+		docs[i] = map[string]string{"_id": id}
+	}
+
+	// // convert body to JSON
+	var buf bytes.Buffer
+	if err := json.NewEncoder(&buf).Encode(map[string]interface{}{"ids": ids}); err != nil {
+		return nil, fmt.Errorf("error encoding body: %w", err)
+	}
+
+	// Perform the mget request
+	res, err := r.client.Mget(
+		&buf,
+		r.client.Mget.WithIndex("catalog"),
+		r.client.Mget.WithContext(ctx),
+	)
+	if err != nil {
+		return nil, fmt.Errorf("error performing mget: %w", err)
+	}
+	defer res.Body.Close()
+
+	// Parse the response
+	var result struct {
+		Docs []struct {
+			ID     string          `json:"_id"`
+			Source productDocument `json:"_source"`
+			Found  bool            `json:"found"`
+		} `json:"docs"`
+	}
+
+	if err := json.NewDecoder(res.Body).Decode(&result); err != nil {
+		return nil, fmt.Errorf("error parsing response: %w", err)
+	}
+
+	// convert results to  products
+	products := make([]Product, 0, len(result.Docs))
+	for _, doc := range result.Docs {
+		if doc.Found {
+			products = append(products, Product{
+				ID:          doc.ID,
+				Name:        doc.Source.Name,
+				Description: doc.Source.Description,
+				Price:       doc.Source.Price,
+			})
+		}
+	}
+
+	return products, nil
+
+	// // unofficial depricated way
+	// items := []*elastic.MultiGetItem{}
+	// for _, id := range ids {
+	// 	items = append(
+	// 		items,
+	// 		elastic.NewMultiGetItem().
+	// 			Index("catalog").
+	// 			Type("product").
+	// 			Id(id),
+	// 	)
+	// }
+
+	// resp, err := r.clientdep.
+	// 	MultiGet().
+	// 	Add(items...).
+	// 	Do(ctx)
+	// if err != nil {
+	// 	return nil, fmt.Errorf("Error calling muti get: %w", err)
+	// }
+
+	// var products []Product
+
+	// for _, doc := range resp.Docs {
+	// 	var p productDocument
+	// 	if err := json.Unmarshal(*doc.Source, &p); err != nil {
+	// 		return nil, fmt.Errorf("Error deconding response: %w", err)
+	// 	} else {
+	// 		products = append(products, Product{
+	// 			ID:          doc.Id,
+	// 			Name:        p.Name,
+	// 			Description: p.Description,
+	// 			Price:       p.Price,
+	// 		})
+	// 	}
+	// }
+
+	// return products, nil
 }
 
 func (r *elasticRepository) SearchProducts(ctx context.Context, query string, skip uint64, take uint64) ([]Product, error) {
@@ -273,7 +361,9 @@ func NewElasticRepository(url string) (Repository, error) {
 	// official
 	// by default will use port 9200
 	// and [http.DefaultTransport]
-	es, err := elasticsearch.NewClient(elasticsearch.Config{})
+	es, err := elasticsearch.NewClient(elasticsearch.Config{
+		Addresses: []string{url},
+	})
 	if err != nil {
 		return nil, err
 	}
