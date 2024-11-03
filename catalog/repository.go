@@ -42,6 +42,7 @@ type Repository interface {
 
 type elasticRepository struct {
 	client *elasticsearch.Client
+	tes    *elasticsearch.TypedClient
 	// // depricated
 	// renamed to clientdep for continuation with the vid
 	clientdep *elastic.Client
@@ -173,7 +174,6 @@ func (r *elasticRepository) GetProductByID(ctx context.Context, id string) (*Pro
 }
 
 func (r *elasticRepository) ListProducts(ctx context.Context, skip uint64, take uint64) ([]Product, error) {
-
 	// // Create the search query
 	// // SearchRequest configures the Search API request.
 	// query := map[string]interface{}{
@@ -262,7 +262,6 @@ func (r *elasticRepository) ListProducts(ctx context.Context, skip uint64, take 
 }
 
 func (r *elasticRepository) ListProductsWithIDs(ctx context.Context, ids []string) ([]Product, error) {
-
 	// Prepare the request body docs
 	docs := make([]map[string]string, len(ids))
 	for i, id := range ids {
@@ -354,6 +353,92 @@ func (r *elasticRepository) ListProductsWithIDs(ctx context.Context, ids []strin
 }
 
 func (r *elasticRepository) SearchProducts(ctx context.Context, query string, skip uint64, take uint64) ([]Product, error) {
+	// official
+	searchQuery := map[string]interface{}{
+		"query": map[string]interface{}{
+			"muti_match": map[string]interface{}{
+				"query":  query,
+				"fields": []string{"name", "description"},
+			},
+		},
+		"from": skip,
+		"size": take,
+	}
+
+	// Convert the query to json
+	queryData, err := json.Marshal(searchQuery)
+	if err != nil {
+		return nil, fmt.Errorf("Error encoding search query : %w", err)
+	}
+
+	// send request
+	res, err := r.client.Search(
+		r.client.Search.WithContext(ctx),
+		r.client.Search.WithIndex("catalog"),
+		r.client.Search.WithBody(bytes.NewReader(queryData)),
+	)
+	if err != nil {
+		return nil, fmt.Errorf("Error sending request to elasticsearch: %w", err)
+	}
+	defer res.Body.Close()
+
+	// Check for response err
+	if res.IsError() {
+		return nil, fmt.Errorf("Response error: %w", res.String())
+	}
+
+	// parse response
+	var result struct {
+		Hits struct {
+			Hits []struct {
+				ID     string          `json:"_id"`
+				Source productDocument `json:"_source"`
+			} `json:"hits"`
+		} `json:"hits"`
+	}
+	if err := json.NewDecoder(res.Body).Decode(&result); err != nil {
+		return nil, fmt.Errorf("Error Decoding response: %w", err)
+	}
+
+	var products []Product
+	for _, hit := range result.Hits.Hits {
+		products = append(products, Product{
+			ID:          hit.ID,
+			Name:        hit.Source.Name,
+			Description: hit.Source.Description,
+			Price:       hit.Source.Price,
+		})
+	}
+
+	return products, nil
+
+	//  // unofficial
+	// res, err := r.clientdep.Search().
+	// 	Index("catalog").
+	// 	Type("product").
+	// 	Query(elastic.NewMultiMatchQuery(query, "name", "description")).
+	// 	From(int(skip)).Size(int(take)).
+	// 	Do(ctx)
+	// if err != nil {
+	// 	return nil, err
+	// }
+	//
+	// var products []Product
+	//
+	// for _, hit := range res.Hits.Hits {
+	// 	var p productDocument
+	// 	if err := json.Unmarshal(*hit.Source, &p); err == nil {
+	// 		products = append(products, Product{
+	// 			ID:          hit.Id,
+	// 			Name:        p.Name,
+	// 			Description: p.Description,
+	// 			Price:       p.Price,
+	// 		})
+	// 	}
+	// }
+	//
+	// return products, nil
+
 	panic("")
 }
 
@@ -372,6 +457,11 @@ func NewElasticRepository(url string) (Repository, error) {
 	if err != nil {
 		return nil, err
 	}
+
+	// not fully stable but close to olivere/elastic unofficial implementation.
+	tes, err := elasticsearch.NewTypedClient(elasticsearch.Config{
+		Addresses: []string{url},
+	})
 
 	fmt.Print(res)
 
@@ -395,6 +485,7 @@ func NewElasticRepository(url string) (Repository, error) {
 
 	return &elasticRepository{
 		client:    es,
+		tes:       tes,
 		clientdep: client,
 	}, nil
 }
