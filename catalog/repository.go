@@ -18,13 +18,6 @@ type productDocument struct {
 	// WARN: why is price string?
 }
 
-type Product struct {
-	ID          string
-	Name        string
-	Description string
-	Price       string
-}
-
 // TODO: using depricated elastic search client
 // update the implementation to the official client
 // "github.com/elastic/go-elasticsearch/v8"
