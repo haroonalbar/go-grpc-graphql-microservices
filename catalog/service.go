@@ -11,8 +11,8 @@ import (
 type Service interface {
 	PostProduct(ctx context.Context, name, description string, price float64) (*Product, error)
 	GetProduct(ctx context.Context, id string) (*Product, error)
-	ListProducts(ctx context.Context, skip uint64, take uint64) ([]Product, error)
-	ListProductsByIDs(ctx context.Context, ids []string) ([]Product, error)
+	GetProducts(ctx context.Context, skip uint64, take uint64) ([]Product, error)
+	GetProductsByIDs(ctx context.Context, ids []string) ([]Product, error)
 	SearchProducts(ctx context.Context, query string, skip uint64, take uint64) ([]Product, error)
 }
 
@@ -45,12 +45,13 @@ func (s *catalogService) PostProduct(ctx context.Context, name, description stri
 	return p, nil
 }
 
-func (s *catalogService) GetProduct(ctx context.Context, id string) (*Product, error) { panic("") }
-func (s *catalogService) ListProducts(ctx context.Context, skip uint64, take uint64) ([]Product, error) {
-	panic("")
+func (s *catalogService) GetProduct(ctx context.Context, id string) (*Product, error) {
 }
 
-func (s *catalogService) ListProductsByIDs(ctx context.Context, ids []string) ([]Product, error) {
+func (s *catalogService) GetProducts(ctx context.Context, skip uint64, take uint64) ([]Product, error) {
+}
+
+func (s *catalogService) GetProductsByIDs(ctx context.Context, ids []string) ([]Product, error) {
 	panic("")
 }
 
