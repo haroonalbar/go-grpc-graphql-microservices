@@ -2,7 +2,6 @@ package catalog
 
 import (
 	"context"
-	"strconv"
 
 	"github.com/segmentio/ksuid"
 )
@@ -16,10 +15,10 @@ type Service interface {
 }
 
 type Product struct {
-	ID          string `json:"id"`
-	Name        string `json:"name"`
-	Description string `json:"description"`
-	Price       string `json:"price"`
+	ID          string  `json:"id"`
+	Name        string  `json:"name"`
+	Description string  `json:"description"`
+	Price       float64 `json:"price"`
 }
 
 type catalogService struct {
@@ -35,7 +34,7 @@ func (s *catalogService) PostProduct(ctx context.Context, name, description stri
 		ID:          ksuid.New().String(),
 		Name:        name,
 		Description: description,
-		Price:       strconv.FormatFloat(price, 'f', 2, 64),
+		Price:       price,
 	}
 
 	if err := s.repository.PutProduct(ctx, *p); err != nil {
