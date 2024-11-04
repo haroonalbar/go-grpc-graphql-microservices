@@ -72,10 +72,19 @@ func (s *grpcServer) GetProduct(ctx context.Context, r *pb.GetProductRequest) (*
 }
 
 func (s *grpcServer) GetProducts(ctx context.Context, r *pb.GetProductsRequest) (*pb.GetProductsResponse, error) {
-	ps, err := s.service.GetProducts(ctx, r.Skip, r.Take)
+	var ps []Product
+	var err error
+	if r.Query != "" {
+		ps, err = s.service.SearchProducts(ctx, r.Query, r.Skip, r.Take)
+	} else if len(r.Ids) > 0 {
+		ps, err = s.service.GetProductsByIDs(ctx, r.Ids)
+	} else {
+		ps, err = s.service.GetProducts(ctx, r.Skip, r.Take)
+	}
 	if err != nil {
 		return nil, err
 	}
+
 	var products []*pb.Product
 	for _, p := range ps {
 		products = append(products, &pb.Product{
