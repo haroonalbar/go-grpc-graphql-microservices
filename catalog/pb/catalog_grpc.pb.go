@@ -19,253 +19,177 @@ import (
 const _ = grpc.SupportPackageIsVersion9
 
 const (
-	ProductService_PostProduct_FullMethodName      = "/pb.ProductService/PostProduct"
-	ProductService_GetProduct_FullMethodName       = "/pb.ProductService/GetProduct"
-	ProductService_GetProducts_FullMethodName      = "/pb.ProductService/GetProducts"
-	ProductService_GetProductsByIDs_FullMethodName = "/pb.ProductService/GetProductsByIDs"
-	ProductService_SearchProducts_FullMethodName   = "/pb.ProductService/SearchProducts"
+	CatalogService_PostProduct_FullMethodName = "/pb.CatalogService/PostProduct"
+	CatalogService_GetProduct_FullMethodName  = "/pb.CatalogService/GetProduct"
+	CatalogService_GetProducts_FullMethodName = "/pb.CatalogService/GetProducts"
 )
 
-// ProductServiceClient is the client API for ProductService service.
+// CatalogServiceClient is the client API for CatalogService service.
 //
 // For semantics around ctx use and closing/ending streaming RPCs, please refer to https://pkg.go.dev/google.golang.org/grpc/?tab=doc#ClientConn.NewStream.
-type ProductServiceClient interface {
+type CatalogServiceClient interface {
 	PostProduct(ctx context.Context, in *PostProductRequest, opts ...grpc.CallOption) (*PostProductResponse, error)
 	GetProduct(ctx context.Context, in *GetProductRequest, opts ...grpc.CallOption) (*GetProductResponse, error)
 	GetProducts(ctx context.Context, in *GetProductsRequest, opts ...grpc.CallOption) (*GetProductsResponse, error)
-	GetProductsByIDs(ctx context.Context, in *GetProductsByIDsRequest, opts ...grpc.CallOption) (*GetProductsResponse, error)
-	SearchProducts(ctx context.Context, in *SearchProductsRequest, opts ...grpc.CallOption) (*GetProductsResponse, error)
 }
 
-type productServiceClient struct {
+type catalogServiceClient struct {
 	cc grpc.ClientConnInterface
 }
 
-func NewProductServiceClient(cc grpc.ClientConnInterface) ProductServiceClient {
-	return &productServiceClient{cc}
+func NewCatalogServiceClient(cc grpc.ClientConnInterface) CatalogServiceClient {
+	return &catalogServiceClient{cc}
 }
 
-func (c *productServiceClient) PostProduct(ctx context.Context, in *PostProductRequest, opts ...grpc.CallOption) (*PostProductResponse, error) {
+func (c *catalogServiceClient) PostProduct(ctx context.Context, in *PostProductRequest, opts ...grpc.CallOption) (*PostProductResponse, error) {
 	cOpts := append([]grpc.CallOption{grpc.StaticMethod()}, opts...)
 	out := new(PostProductResponse)
-	err := c.cc.Invoke(ctx, ProductService_PostProduct_FullMethodName, in, out, cOpts...)
+	err := c.cc.Invoke(ctx, CatalogService_PostProduct_FullMethodName, in, out, cOpts...)
 	if err != nil {
 		return nil, err
 	}
 	return out, nil
 }
 
-func (c *productServiceClient) GetProduct(ctx context.Context, in *GetProductRequest, opts ...grpc.CallOption) (*GetProductResponse, error) {
+func (c *catalogServiceClient) GetProduct(ctx context.Context, in *GetProductRequest, opts ...grpc.CallOption) (*GetProductResponse, error) {
 	cOpts := append([]grpc.CallOption{grpc.StaticMethod()}, opts...)
 	out := new(GetProductResponse)
-	err := c.cc.Invoke(ctx, ProductService_GetProduct_FullMethodName, in, out, cOpts...)
+	err := c.cc.Invoke(ctx, CatalogService_GetProduct_FullMethodName, in, out, cOpts...)
 	if err != nil {
 		return nil, err
 	}
 	return out, nil
 }
 
-func (c *productServiceClient) GetProducts(ctx context.Context, in *GetProductsRequest, opts ...grpc.CallOption) (*GetProductsResponse, error) {
+func (c *catalogServiceClient) GetProducts(ctx context.Context, in *GetProductsRequest, opts ...grpc.CallOption) (*GetProductsResponse, error) {
 	cOpts := append([]grpc.CallOption{grpc.StaticMethod()}, opts...)
 	out := new(GetProductsResponse)
-	err := c.cc.Invoke(ctx, ProductService_GetProducts_FullMethodName, in, out, cOpts...)
+	err := c.cc.Invoke(ctx, CatalogService_GetProducts_FullMethodName, in, out, cOpts...)
 	if err != nil {
 		return nil, err
 	}
 	return out, nil
 }
 
-func (c *productServiceClient) GetProductsByIDs(ctx context.Context, in *GetProductsByIDsRequest, opts ...grpc.CallOption) (*GetProductsResponse, error) {
-	cOpts := append([]grpc.CallOption{grpc.StaticMethod()}, opts...)
-	out := new(GetProductsResponse)
-	err := c.cc.Invoke(ctx, ProductService_GetProductsByIDs_FullMethodName, in, out, cOpts...)
-	if err != nil {
-		return nil, err
-	}
-	return out, nil
-}
-
-func (c *productServiceClient) SearchProducts(ctx context.Context, in *SearchProductsRequest, opts ...grpc.CallOption) (*GetProductsResponse, error) {
-	cOpts := append([]grpc.CallOption{grpc.StaticMethod()}, opts...)
-	out := new(GetProductsResponse)
-	err := c.cc.Invoke(ctx, ProductService_SearchProducts_FullMethodName, in, out, cOpts...)
-	if err != nil {
-		return nil, err
-	}
-	return out, nil
-}
-
-// ProductServiceServer is the server API for ProductService service.
-// All implementations must embed UnimplementedProductServiceServer
+// CatalogServiceServer is the server API for CatalogService service.
+// All implementations must embed UnimplementedCatalogServiceServer
 // for forward compatibility.
-type ProductServiceServer interface {
+type CatalogServiceServer interface {
 	PostProduct(context.Context, *PostProductRequest) (*PostProductResponse, error)
 	GetProduct(context.Context, *GetProductRequest) (*GetProductResponse, error)
 	GetProducts(context.Context, *GetProductsRequest) (*GetProductsResponse, error)
-	GetProductsByIDs(context.Context, *GetProductsByIDsRequest) (*GetProductsResponse, error)
-	SearchProducts(context.Context, *SearchProductsRequest) (*GetProductsResponse, error)
-	mustEmbedUnimplementedProductServiceServer()
+	mustEmbedUnimplementedCatalogServiceServer()
 }
 
-// UnimplementedProductServiceServer must be embedded to have
+// UnimplementedCatalogServiceServer must be embedded to have
 // forward compatible implementations.
 //
 // NOTE: this should be embedded by value instead of pointer to avoid a nil
 // pointer dereference when methods are called.
-type UnimplementedProductServiceServer struct{}
+type UnimplementedCatalogServiceServer struct{}
 
-func (UnimplementedProductServiceServer) PostProduct(context.Context, *PostProductRequest) (*PostProductResponse, error) {
+func (UnimplementedCatalogServiceServer) PostProduct(context.Context, *PostProductRequest) (*PostProductResponse, error) {
 	return nil, status.Errorf(codes.Unimplemented, "method PostProduct not implemented")
 }
-func (UnimplementedProductServiceServer) GetProduct(context.Context, *GetProductRequest) (*GetProductResponse, error) {
+func (UnimplementedCatalogServiceServer) GetProduct(context.Context, *GetProductRequest) (*GetProductResponse, error) {
 	return nil, status.Errorf(codes.Unimplemented, "method GetProduct not implemented")
 }
-func (UnimplementedProductServiceServer) GetProducts(context.Context, *GetProductsRequest) (*GetProductsResponse, error) {
+func (UnimplementedCatalogServiceServer) GetProducts(context.Context, *GetProductsRequest) (*GetProductsResponse, error) {
 	return nil, status.Errorf(codes.Unimplemented, "method GetProducts not implemented")
 }
-func (UnimplementedProductServiceServer) GetProductsByIDs(context.Context, *GetProductsByIDsRequest) (*GetProductsResponse, error) {
-	return nil, status.Errorf(codes.Unimplemented, "method GetProductsByIDs not implemented")
-}
-func (UnimplementedProductServiceServer) SearchProducts(context.Context, *SearchProductsRequest) (*GetProductsResponse, error) {
-	return nil, status.Errorf(codes.Unimplemented, "method SearchProducts not implemented")
-}
-func (UnimplementedProductServiceServer) mustEmbedUnimplementedProductServiceServer() {}
-func (UnimplementedProductServiceServer) testEmbeddedByValue()                        {}
+func (UnimplementedCatalogServiceServer) mustEmbedUnimplementedCatalogServiceServer() {}
+func (UnimplementedCatalogServiceServer) testEmbeddedByValue()                        {}
 
-// UnsafeProductServiceServer may be embedded to opt out of forward compatibility for this service.
-// Use of this interface is not recommended, as added methods to ProductServiceServer will
+// UnsafeCatalogServiceServer may be embedded to opt out of forward compatibility for this service.
+// Use of this interface is not recommended, as added methods to CatalogServiceServer will
 // result in compilation errors.
-type UnsafeProductServiceServer interface {
-	mustEmbedUnimplementedProductServiceServer()
+type UnsafeCatalogServiceServer interface {
+	mustEmbedUnimplementedCatalogServiceServer()
 }
 
-func RegisterProductServiceServer(s grpc.ServiceRegistrar, srv ProductServiceServer) {
-	// If the following call pancis, it indicates UnimplementedProductServiceServer was
+func RegisterCatalogServiceServer(s grpc.ServiceRegistrar, srv CatalogServiceServer) {
+	// If the following call pancis, it indicates UnimplementedCatalogServiceServer was
 	// embedded by pointer and is nil.  This will cause panics if an
 	// unimplemented method is ever invoked, so we test this at initialization
 	// time to prevent it from happening at runtime later due to I/O.
 	if t, ok := srv.(interface{ testEmbeddedByValue() }); ok {
 		t.testEmbeddedByValue()
 	}
-	s.RegisterService(&ProductService_ServiceDesc, srv)
+	s.RegisterService(&CatalogService_ServiceDesc, srv)
 }
 
-func _ProductService_PostProduct_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
+func _CatalogService_PostProduct_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
 	in := new(PostProductRequest)
 	if err := dec(in); err != nil {
 		return nil, err
 	}
 	if interceptor == nil {
-		return srv.(ProductServiceServer).PostProduct(ctx, in)
+		return srv.(CatalogServiceServer).PostProduct(ctx, in)
 	}
 	info := &grpc.UnaryServerInfo{
 		Server:     srv,
-		FullMethod: ProductService_PostProduct_FullMethodName,
+		FullMethod: CatalogService_PostProduct_FullMethodName,
 	}
 	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
-		return srv.(ProductServiceServer).PostProduct(ctx, req.(*PostProductRequest))
+		return srv.(CatalogServiceServer).PostProduct(ctx, req.(*PostProductRequest))
 	}
 	return interceptor(ctx, in, info, handler)
 }
 
-func _ProductService_GetProduct_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
+func _CatalogService_GetProduct_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
 	in := new(GetProductRequest)
 	if err := dec(in); err != nil {
 		return nil, err
 	}
 	if interceptor == nil {
-		return srv.(ProductServiceServer).GetProduct(ctx, in)
+		return srv.(CatalogServiceServer).GetProduct(ctx, in)
 	}
 	info := &grpc.UnaryServerInfo{
 		Server:     srv,
-		FullMethod: ProductService_GetProduct_FullMethodName,
+		FullMethod: CatalogService_GetProduct_FullMethodName,
 	}
 	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
-		return srv.(ProductServiceServer).GetProduct(ctx, req.(*GetProductRequest))
+		return srv.(CatalogServiceServer).GetProduct(ctx, req.(*GetProductRequest))
 	}
 	return interceptor(ctx, in, info, handler)
 }
 
-func _ProductService_GetProducts_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
+func _CatalogService_GetProducts_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
 	in := new(GetProductsRequest)
 	if err := dec(in); err != nil {
 		return nil, err
 	}
 	if interceptor == nil {
-		return srv.(ProductServiceServer).GetProducts(ctx, in)
+		return srv.(CatalogServiceServer).GetProducts(ctx, in)
 	}
 	info := &grpc.UnaryServerInfo{
 		Server:     srv,
-		FullMethod: ProductService_GetProducts_FullMethodName,
+		FullMethod: CatalogService_GetProducts_FullMethodName,
 	}
 	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
-		return srv.(ProductServiceServer).GetProducts(ctx, req.(*GetProductsRequest))
+		return srv.(CatalogServiceServer).GetProducts(ctx, req.(*GetProductsRequest))
 	}
 	return interceptor(ctx, in, info, handler)
 }
 
-func _ProductService_GetProductsByIDs_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
-	in := new(GetProductsByIDsRequest)
-	if err := dec(in); err != nil {
-		return nil, err
-	}
-	if interceptor == nil {
-		return srv.(ProductServiceServer).GetProductsByIDs(ctx, in)
-	}
-	info := &grpc.UnaryServerInfo{
-		Server:     srv,
-		FullMethod: ProductService_GetProductsByIDs_FullMethodName,
-	}
-	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
-		return srv.(ProductServiceServer).GetProductsByIDs(ctx, req.(*GetProductsByIDsRequest))
-	}
-	return interceptor(ctx, in, info, handler)
-}
-
-func _ProductService_SearchProducts_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
-	in := new(SearchProductsRequest)
-	if err := dec(in); err != nil {
-		return nil, err
-	}
-	if interceptor == nil {
-		return srv.(ProductServiceServer).SearchProducts(ctx, in)
-	}
-	info := &grpc.UnaryServerInfo{
-		Server:     srv,
-		FullMethod: ProductService_SearchProducts_FullMethodName,
-	}
-	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
-		return srv.(ProductServiceServer).SearchProducts(ctx, req.(*SearchProductsRequest))
-	}
-	return interceptor(ctx, in, info, handler)
-}
-
-// ProductService_ServiceDesc is the grpc.ServiceDesc for ProductService service.
+// CatalogService_ServiceDesc is the grpc.ServiceDesc for CatalogService service.
 // It's only intended for direct use with grpc.RegisterService,
 // and not to be introspected or modified (even as a copy)
-var ProductService_ServiceDesc = grpc.ServiceDesc{
-	ServiceName: "pb.ProductService",
-	HandlerType: (*ProductServiceServer)(nil),
+var CatalogService_ServiceDesc = grpc.ServiceDesc{
+	ServiceName: "pb.CatalogService",
+	HandlerType: (*CatalogServiceServer)(nil),
 	Methods: []grpc.MethodDesc{
 		{
 			MethodName: "PostProduct",
-			Handler:    _ProductService_PostProduct_Handler,
+			Handler:    _CatalogService_PostProduct_Handler,
 		},
 		{
 			MethodName: "GetProduct",
-			Handler:    _ProductService_GetProduct_Handler,
+			Handler:    _CatalogService_GetProduct_Handler,
 		},
 		{
 			MethodName: "GetProducts",
-			Handler:    _ProductService_GetProducts_Handler,
-		},
-		{
-			MethodName: "GetProductsByIDs",
-			Handler:    _ProductService_GetProductsByIDs_Handler,
-		},
-		{
-			MethodName: "SearchProducts",
-			Handler:    _ProductService_SearchProducts_Handler,
+			Handler:    _CatalogService_GetProducts_Handler,
 		},
 	},
 	Streams:  []grpc.StreamDesc{},
