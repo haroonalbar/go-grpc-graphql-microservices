@@ -1,6 +1,6 @@
 module github.com/haroonalbar/go-grpc-graphql-microservices
 
-go 1.23.1
+go 1.23.2
 
 require (
 	github.com/99designs/gqlgen v0.17.55
