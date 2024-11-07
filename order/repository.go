@@ -50,7 +50,7 @@ func (r *postgresRepository) Close() {
 // Context Support: Respects context cancellation
 //
 // The deferred function should check if err is not nil before deciding to commit or rollback,
-// but it should use a named return error to capture the function's scope error correctly
+// so it should use a named return error to capture the function's scope error correctly
 func (r *postgresRepository) PutOrder(ctx context.Context, o Order) (err error) {
 	// Starts a new database transaction. All subsequent operations will be part of this atomic transaction.
 	tx, err := r.db.BeginTx(ctx, nil)
@@ -59,7 +59,7 @@ func (r *postgresRepository) PutOrder(ctx context.Context, o Order) (err error) 
 	}
 	// Deferred Transaction Management
 	defer func() {
-		// 		This ensures that if any error occurs during the transaction:
+		// This ensures that if any error occurs during the transaction:
 		// The transaction is rolled back (all changes are undone)
 		// If successful, the transaction is committed
 		if err != nil {
@@ -96,13 +96,17 @@ func (r *postgresRepository) PutOrder(ctx context.Context, o Order) (err error) 
 		}
 	}
 	// Finalize Bulk Insert:
-	// 	Executes the bulk insert of all products.
+	// Executes the bulk insert of all products.
 	_, err = stmt.ExecContext(ctx)
 	if err != nil {
 		return
 	}
 
-	stmt.Close()
+	err = stmt.Close()
+	if err != nil {
+		return
+	}
+
 	return
 }
 
