@@ -91,3 +91,7 @@ go generate # for generating pb files
 cd catalog
 go generate #it's defined on catalog/server
 ```
+
+- Order:
+- setup sql.up , db, app dockerfile
+- setup Repository

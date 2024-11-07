@@ -17,6 +17,8 @@ type postgresRepository struct {
 	db *sql.DB
 }
 
+// NewPostgresRepository creates a new PostgresRepository and attempts to open a connection to the database using
+// the given connection string. If the connection attempt fails, it returns an error.
 func NewPostgresRepository(url string) (Repository, error) {
 	db, err := sql.Open("postgres", url)
 	if err != nil {
@@ -33,6 +35,13 @@ func (r *postgresRepository) Close() {
 	r.db.Close()
 }
 
+// PutOrder saves an order to the database.
+//
+// It does this by using a single database transaction to:
+// 1. Insert the main order record into the orders table.
+// 2. Bulk insert all the products associated with the order, using the PostgreSQL COPY command.
+//
+// The function returns an error if any part of this process fails.
 // The key benefits of this implementation are:
 // Atomicity: Either all operations succeed or none do
 // Performance: Uses COPY for efficient bulk insertion of products
@@ -41,11 +50,8 @@ func (r *postgresRepository) Close() {
 // Context Support: Respects context cancellation
 //
 // The deferred function should check if err is not nil before deciding to commit or rollback,
-//	but it should use a named return error to capture the function's scope error correctly
-//
-
+// but it should use a named return error to capture the function's scope error correctly
 func (r *postgresRepository) PutOrder(ctx context.Context, o Order) (err error) {
-
 	// Starts a new database transaction. All subsequent operations will be part of this atomic transaction.
 	tx, err := r.db.BeginTx(ctx, nil)
 	if err != nil {
@@ -103,8 +109,15 @@ func (r *postgresRepository) PutOrder(ctx context.Context, o Order) (err error) 
 // This function is using a row-by-row processing approach to group products
 // with their respective orders, taking advantage of the ORDER BY o.id to ensure
 // all products for the same order are processed together.
-func (r *postgresRepository) GetOrderForAccount(ctx context.Context, accountID string) ([]Order, error) {
 
+// GetOrderForAccount retrieves all orders for the given account ID.
+//
+// It executes a single SQL query to retrieve all orders and their products
+// in a single pass. This query uses a JOIN to combine the orders and order_products
+// tables. The result is then processed in a single pass, using a row-by-row
+// approach to group products with their respective orders. The result is a slice
+// of Order objects, each containing a slice of OrderedProduct objects.
+func (r *postgresRepository) GetOrderForAccount(ctx context.Context, accountID string) ([]Order, error) {
 	// Execute SQL query to get orders and their products
 	rows, err := r.db.QueryContext(
 		ctx,
