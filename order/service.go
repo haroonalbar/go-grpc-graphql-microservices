@@ -1,6 +1,9 @@
 package order
 
-import "time"
+import (
+	"context"
+	"time"
+)
 
 type Order struct {
 	ID         string           `json:"id"`
@@ -16,4 +19,25 @@ type OrderedProduct struct {
 	Description string  `json:"description"`
 	Price       float64 `json:"price"`
 	Quantity    uint32  `json:"quantity"`
+}
+
+type Service interface {
+	PostOrder(ctx context.Context, accountID string, products []OrderedProduct) (*Order, error)
+	GetOrdersForAccount(ctx context.Context, accountID string) ([]Order, error)
+}
+
+type orderService struct {
+	repository Repository
+}
+
+func NewService(r Repository) Service {
+	return &orderService{r}
+}
+
+func (s *orderService) PostOrder(ctx context.Context, accountID string, products []OrderedProduct) (*Order, error) {
+	panic("")
+}
+
+func (s *orderService) GetOrdersForAccount(ctx context.Context, accountID string) ([]Order, error) {
+	panic("")
 }

@@ -101,7 +101,7 @@ func (r *postgresRepository) PutOrder(ctx context.Context, o Order) (err error) 
 	if err != nil {
 		return
 	}
-
+	// Finalize the bulk insert by closing the statement
 	err = stmt.Close()
 	if err != nil {
 		return
