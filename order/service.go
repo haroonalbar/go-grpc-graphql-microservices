@@ -1,3 +1,4 @@
+//go:generate protoc --go_out=./ --go-grpc_out=. order.proto
 package order
 
 import (
@@ -9,8 +10,8 @@ import (
 
 type Order struct {
 	ID         string           `json:"id"`
-	AccountID  string           `json:"account_id"`
 	CreatedAt  time.Time        `json:"created_at"`
+	AccountID  string           `json:"account_id"`
 	TotalPrice float64          `json:"tatal_price"`
 	Products   []OrderedProduct `json:"products"`
 }

@@ -95,3 +95,12 @@ go generate #it's defined on catalog/server
 - Order:
 - setup sql.up , db, app dockerfile
 - setup Repository
+- setup Service
+- setup order.proto
+- add generate comment to service.go
+- generate pb
+
+```sh
+cd order
+go generate
+```
