@@ -27,6 +27,7 @@ func main() {
 		r, err = order.NewPostgresRepository(cfg.DatabaseURL)
 		if err != nil {
 			log.Println(err)
+			return
 		}
 		return
 	})
