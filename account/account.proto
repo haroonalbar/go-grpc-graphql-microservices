@@ -5,12 +5,12 @@ package pb;
 option go_package = "./pb";
 
 message Account {
-    string id = 1;
-    string name = 2;
+  string id = 1;
+  string name = 2;
 }
 
 message PostAccountRequest {
-    string name = 1;
+  string name = 1;
 }
 message PostAccountResponse {
   Account account = 1;
@@ -30,10 +30,7 @@ message GetAccountsResponse {
 }
 
 service AccountService {
-    rpc PostAccount (PostAccountRequest) returns (PostAccountResponse){
-    }
-    rpc GetAccount (GetAccountRequest) returns (GetAccountResponse){
-    }
-    rpc GetAccounts (GetAccountsRequest) returns (GetAccountsResponse){
-    }
+  rpc PostAccount(PostAccountRequest) returns (PostAccountResponse) {}
+  rpc GetAccount(GetAccountRequest) returns (GetAccountResponse) {}
+  rpc GetAccounts(GetAccountsRequest) returns (GetAccountsResponse) {}
 }
