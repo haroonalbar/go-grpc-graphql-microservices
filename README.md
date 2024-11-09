@@ -1,4 +1,4 @@
-# Microservices in Go with gRPC , Graphql
+# Microservices in Go with gRPC , Graphql & Elastic Search
 
 ## WIP! - Work in progress
 
@@ -104,3 +104,6 @@ go generate #it's defined on catalog/server
 cd order
 go generate
 ```
+
+- setup main - connect to db and listen and serve order microservice on 8080
+-
