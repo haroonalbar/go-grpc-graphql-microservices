@@ -123,12 +123,14 @@ func (s *grpcServer) PostOrder(ctx context.Context, r *pb.PostOrderRequest) (*pb
 		TotalPrice: order.TotalPrice,
 	}
 
+	// convert CreatedAt to bytes
 	orderProto.CreatedAt, err = order.CreatedAt.MarshalBinary()
 	if err != nil {
 		log.Println("Error conveting CreatedAt time to byte: ", err)
 		return nil, errors("couldn't convert time to byte CreateAt")
 	}
 
+	// add products
 	for _, p := range order.Products {
 		orderProto.Products = append(orderProto.Products, &pb.Order_OrderProduct{
 			Id:          p.ID,
