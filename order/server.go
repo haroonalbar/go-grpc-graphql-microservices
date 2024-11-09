@@ -130,7 +130,7 @@ func (s *grpcServer) PostOrder(ctx context.Context, r *pb.PostOrderRequest) (*pb
 		return nil, errors("couldn't convert time to byte CreateAt")
 	}
 
-	// add products
+	// add ordered  products
 	for _, p := range order.Products {
 		orderProto.Products = append(orderProto.Products, &pb.Order_OrderProduct{
 			Id:          p.ID,
