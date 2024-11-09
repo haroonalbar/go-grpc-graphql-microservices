@@ -11,7 +11,9 @@ import (
 	"github.com/haroonalbar/go-grpc-graphql-microservices/catalog"
 	"github.com/haroonalbar/go-grpc-graphql-microservices/order/pb"
 	"google.golang.org/grpc"
+	"google.golang.org/grpc/codes"
 	"google.golang.org/grpc/reflection"
+	"google.golang.org/grpc/status"
 )
 
 type grpcServer struct {
