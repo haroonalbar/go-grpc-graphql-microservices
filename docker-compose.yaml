@@ -1,8 +1,77 @@
+version: "3.7"
+
 services:
   account:
+    build:
+      context: .
+      dockerfile: ./account/app.dockerfile
+    depends_on:
+      - account_db
+    environment:
+      DATABASE_URL: postgres://haroonalbar:000000@account_db/haroonalbar?sslmode=disable
+    restart: on-failure
+
   catalog:
+    build:
+      context: .
+      dockerfile: ./catalog/app.dockerfile
+    depends_on:
+      - catalog_db
+    environment:
+      DATABASE_URL: http://catalog_db:9200
+    restart: on-failure
+
   order:
+    build:
+      context: .
+      dockerfile: ./order/app.dockerfile
+    depends_on:
+      - order_db
+    environment:
+      DATABASE_URL: postgres://haroonalbar:000000@order_db/haroonalbar?sslmode=disable
+      ACCOUNT_SERVICE_URL: account:8080
+      CATALOG_SERVICE_URL: catalog:8080
+    restart: on-failure
+
   graphql:
+    build:
+      context: .
+      dockerfile: ./graphql/app.dockerfile
+    ports:
+      - 8080:8080
+    depends_on:
+      - account
+      - catalog
+      - order
+    environment:
+      ACCOUNT_SERVICE_URL: account:8080
+      CATALOG_SERVICE_URL: catalog:8080
+      ORDER_SERVICE_URL: order:8080
+    restart: on-failure
+
   account_db:
+    build:
+      context: ./account
+      dockerfile: ./account/db.dockerfile
+    environment:
+      POSTGRES_DB: haroonalbar
+      POSTGRES_USER: haroonalbar
+      POSTGRES_PASSWORD: 000000
+    restart: unless-stopped
+
   catalog_db:
+    # image: docker.elastic.co/elasticsearch/elasticsearch:6.2.4
+    image: docker.elastic.co/elasticsearch/elasticsearch:8
+    environment:
+      ES_JAVA_OPTS: -Xms1g -Xmx1g
+      discovery.type: single.node
+
   order_db:
+    build:
+      context: ./order
+      dockerfile: ./order/db.dockerfile
+    environment:
+      POSTGRES_DB: haroonalbar
+      POSTGRES_USER: haroonalbar
+      POSTGRES_PASSWORD: 000000
+    restart: unless-stopped
