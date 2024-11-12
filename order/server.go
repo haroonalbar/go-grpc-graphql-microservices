@@ -49,9 +49,10 @@ func ListenGRPC(s Service, accountURL, catalogURL string, port int) error {
 
 	// Register OrderService with gRPC server
 	pb.RegisterOrderServiceServer(serv, &grpcServer{
-		service:       s,
-		accountClient: accountClient,
-		catalogClient: catalogClient,
+		UnimplementedOrderServiceServer: pb.UnimplementedOrderServiceServer{},
+		service:                         s,
+		accountClient:                   accountClient,
+		catalogClient:                   catalogClient,
 	})
 
 	// Register reflection service for debugging (consider restricting this in production)
