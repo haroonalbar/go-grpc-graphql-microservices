@@ -106,4 +106,9 @@ go generate
 ```
 
 - setup main - connect to db and listen and serve order microservice on 8080
+- setup Server and client
+
+- docker compose file done
+
+- graphql:
 -
