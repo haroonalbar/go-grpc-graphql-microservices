@@ -111,4 +111,10 @@ go generate
 - docker compose file done
 
 - graphql:
--
+- update schema
+- setup generate directive for gqlgen
+
+```sh
+cd graphql
+go generate # located in ./graphql/graph.go
+```
