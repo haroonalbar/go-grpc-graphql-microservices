@@ -1,3 +1,4 @@
+//go:generate sh -c "go get github.com/99designs/gqlgen@v0.17.56 && go run github.com/99designs/gqlgen generate"
 package main
 
 import (
