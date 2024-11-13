@@ -36,8 +36,7 @@ func (r *queryResolver) Accounts(ctx context.Context, pagination *PaginationInpu
 	var skip, take uint64
 	var accounts []*Account
 	if pagination != nil {
-		// skip, take = pagination.bounds()
-		skip, take = uint64(*pagination.Skip), uint64(*pagination.Take)
+		skip, take = pagination.bounds()
 	}
 	accountList, err := r.server.accountClient.GetAccounts(ctx, skip, take)
 	if err != nil {
@@ -77,7 +76,7 @@ func (r *queryResolver) Products(ctx context.Context, pagination *PaginationInpu
 	// multiple
 	var skip, take uint64
 	if pagination != nil {
-		skip, take = uint64(*pagination.Skip), uint64(*pagination.Take)
+		skip, take = pagination.bounds()
 	}
 
 	var q string
@@ -107,7 +106,7 @@ func (r *queryResolver) Products(ctx context.Context, pagination *PaginationInpu
 	return products, nil
 }
 
-func (p PaginationInput) bounds(uint64, uint64) (uint64, uint64) {
+func (p PaginationInput) bounds() (uint64, uint64) {
 	skipValue := uint64(0)
 	takeValue := uint64(0)
 	if p.Skip != nil {
