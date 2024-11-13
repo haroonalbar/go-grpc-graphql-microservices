@@ -31,7 +31,7 @@ func (r *mutationResolver) CreateAccount(ctx context.Context, in AccountInput) (
 }
 
 func (r *mutationResolver) CreateProduct(ctx context.Context, in ProductInput) (*Product, error) {
-	ctx, cancel := context.WithTiemout(ctx, 3*time.Second)
+	ctx, cancel := context.WithTimeout(ctx, 3*time.Second)
 	defer cancel()
 
 	p, err := r.server.catalogClient.PostProduct(ctx, in.Name, in.Description, in.Price)
@@ -52,12 +52,15 @@ func (r *mutationResolver) CreateOrder(ctx context.Context, in OrderInput) (*Ord
 	ctx, cancel := context.WithTimeout(ctx, 3*time.Second)
 	defer cancel()
 
-	products := []order.OrderedProduct
+	products := []order.OrderedProduct{}
 	for _, p := range in.Products {
 		if p.Quantity <= 0 {
 			return nil, ErrInvalidParameter
 		}
-		products = append(products, p)
+		products = append(products, order.OrderedProduct{
+			ID:       p.ID,
+			Quantity: uint32(p.Quantity),
+		})
 	}
 
 	o, err := r.server.orderClient.PostOrder(ctx, in.AccountID, products)
@@ -66,10 +69,21 @@ func (r *mutationResolver) CreateOrder(ctx context.Context, in OrderInput) (*Ord
 		return nil, err
 	}
 
+	var resProducts []*OrderedProduct
+	for _, op := range o.Products {
+		resProducts = append(resProducts, &OrderedProduct{
+			ID:          op.ID,
+			Name:        op.Name,
+			Description: op.Description,
+			Price:       op.Price,
+			Quantity:    int(op.Quantity),
+		})
+	}
+
 	return &Order{
 		ID:         o.ID,
 		CreatedAt:  o.CreatedAt,
 		TotalPrice: o.TotalPrice,
-		Products:   o.Products,
+		Products:   resProducts,
 	}, nil
 }
