@@ -61,6 +61,6 @@ type Mutation{
 
 type Query{
     accounts(pagination: PaginationInput, id: String): [Account!]!
-    products(pagination: PaginationInput, query: String, id: String): [Product!]!
+    products(pagination: PaginationInput, query: String, id: String, ids: [String!]!): [Product!]!
 }
 
