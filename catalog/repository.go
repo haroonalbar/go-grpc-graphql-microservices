@@ -377,7 +377,7 @@ func (r *elasticRepository) SearchProducts(ctx context.Context, query string, sk
 
 	// Check for response err
 	if res.IsError() {
-		return nil, fmt.Errorf("Response error: %w", res.String())
+		return nil, fmt.Errorf("Response error: %s", res.String())
 	}
 
 	// parse response
