@@ -55,7 +55,7 @@ func (r *queryResolver) Accounts(ctx context.Context, pagination *PaginationInpu
 }
 
 // Products samething as Accounts with extra parameter query that's also defined in schema
-func (r *queryResolver) Products(ctx context.Context, pagination *PaginationInput, query *string, id *string, ids []string) ([]*Product, error) {
+func (r *queryResolver) Products(ctx context.Context, pagination *PaginationInput, query *string, id *string) ([]*Product, error) {
 	ctx, cancel := context.WithTimeout(ctx, 3*time.Second)
 	defer cancel()
 	// single
@@ -84,11 +84,11 @@ func (r *queryResolver) Products(ctx context.Context, pagination *PaginationInpu
 		q = *query
 	}
 
-	if len(ids) == 0 {
-		ids = nil
-	}
+	// if len(ids) == 0 {
+	// 	ids = nil
+	// }
 
-	productList, err := r.server.catalogClient.GetProducts(ctx, skip, take, ids, q)
+	productList, err := r.server.catalogClient.GetProducts(ctx, skip, take, nil, q)
 	if err != nil {
 		log.Println("Error getting products from catalog client: ", err)
 		return nil, err
