@@ -3,6 +3,7 @@ package main
 import (
 	"log"
 	"net/http"
+	"os"
 
 	"github.com/99designs/gqlgen/graphql/handler"
 	"github.com/99designs/gqlgen/graphql/playground"
@@ -26,6 +27,11 @@ type AppConfig struct {
 }
 
 func main() {
+	log.Printf("Environment variables as seen by OS:")
+	log.Printf("ACCOUNT_URL: %s", os.Getenv("ACCOUNT_SERVICE_URL"))
+	log.Printf("CATALOG_URL: %s", os.Getenv("CATALOG_SERVICE_URL"))
+	log.Printf("ORDER_URL: %s", os.Getenv("ORDER_SERVICE_URL"))
+
 	var cfg AppConfig
 	// Process populates the specified struct based on environment variables
 	// TODO: envconfig no longer mainted change the implementation
@@ -34,6 +40,22 @@ func main() {
 		log.Fatalf("Error populating env : %v", err)
 	}
 
+	log.Printf("Config after processing:")
+	log.Printf("AccountUrl: %s", cfg.AccountUrl)
+	log.Printf("CatalogUrl: %s", cfg.CatalogUrl)
+	log.Printf("OrderUrl: %s", cfg.OrderUrl)
+
+	if cfg.AccountUrl == "" {
+		log.Println("AccountUrl is empty in configuration")
+	}
+	if cfg.CatalogUrl == "" {
+		log.Println("CatalogUrl is empty in configuration")
+	}
+	if cfg.OrderUrl == "" {
+		log.Println("OrderUrl is empty in configuration")
+	}
+
+	// graph.go
 	// Create a Graphql server
 	s, err := NewGraphQLServer(cfg.AccountUrl, cfg.CatalogUrl, cfg.OrderUrl)
 	if err != nil {
