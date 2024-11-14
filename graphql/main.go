@@ -10,6 +10,9 @@ import (
 	"github.com/kelseyhightower/envconfig"
 )
 
+// WARN: on schema.graphql products method of tye Query the extra added may or maynot
+// cause issues later
+
 // The envconfig tags you see in this Go struct definition are part of a popular
 // Go library called "envconfig" (or sometimes "go-envconfig").
 // This library is used to populate struct fields from environment variables.
@@ -31,7 +34,6 @@ func main() {
 		log.Fatalf("Error populating env : %v", err)
 	}
 
-	// graph.go
 	// Create a Graphql server
 	s, err := NewGraphQLServer(cfg.AccountUrl, cfg.CatalogUrl, cfg.OrderUrl)
 	if err != nil {
