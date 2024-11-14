@@ -60,8 +60,7 @@ services:
     restart: unless-stopped
 
   catalog_db:
-    # image: docker.elastic.co/elasticsearch/elasticsearch:6.2.4
-    image: docker.elastic.co/elasticsearch/elasticsearch:8
+    image: docker.elastic.co/elasticsearch/elasticsearch:8.12.1
     environment:
       ES_JAVA_OPTS: -Xms1g -Xmx1g
       discovery.type: single.node
