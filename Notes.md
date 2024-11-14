@@ -67,3 +67,25 @@ go generate
 cd graphql
 go generate # located in ./graphql/graph.go
 ```
+
+- envconfig not working perfectly
+
+```bash
+# First, clear any existing env vars     
+unset ACCOUNT_SERVICE_URL CATALOG_SERVICE_URL ORDER_SERVICE_URL
+
+# Then set them one by one
+export ACCOUNT_SERVICE_URL="http://localhost:8081"
+export CATALOG_SERVICE_URL="http://localhost:8082"
+export ORDER_SERVICE_URL="http://localhost:8083"
+
+# Verify they're set
+env | grep URL
+
+# Run the application
+go run .
+```
+
+- Go to grahql playground
+
+> <http://localhost:8080/playground>
