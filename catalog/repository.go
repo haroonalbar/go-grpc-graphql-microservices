@@ -6,9 +6,10 @@ import (
 	"encoding/json"
 	"errors"
 	"fmt"
+	"log"
 
 	"github.com/elastic/go-elasticsearch/v8"
-	"gopkg.in/olivere/elastic.v5"
+	// "gopkg.in/olivere/elastic.v5"
 )
 
 type productDocument struct {
@@ -35,10 +36,10 @@ type Repository interface {
 
 type elasticRepository struct {
 	client *elasticsearch.Client
-	tes    *elasticsearch.TypedClient
-	// // depricated
-	// renamed to clientdep for continuation with the vid
-	clientdep *elastic.Client
+	// tes    *elasticsearch.TypedClient
+	// // // depricated
+	// // renamed to clientdep for continuation with the vid
+	// clientdep *elastic.Client
 }
 
 func (r *elasticRepository) Close() {}
@@ -451,34 +452,36 @@ func NewElasticRepository(url string) (Repository, error) {
 		return nil, err
 	}
 
-	// not fully stable but close to olivere/elastic unofficial implementation.
-	tes, err := elasticsearch.NewTypedClient(elasticsearch.Config{
-		Addresses: []string{url},
-	})
+	log.Print("Elasticserch status :", res.Status())
 
-	fmt.Print(res)
-
-	// return &elasticRepository{
-	// 	client: es,
-
-	// }, nil
-
-	// not official
-	client, err := elastic.NewClient(
-		// SetURL defines the URL endpoints of the Elasticsearch nodes.
-		elastic.SetURL(url),
-		// "sniffing" in the context of Elasticsearch client libraries,
-		// it refers to the ability of these clients to dynamically discover and connect to nodes in an Elasticsearch cluster.
-		// This feature helps clients maintain connections to the cluster even if individual nodes change or become unavailable.
-		elastic.SetSniff(false),
-	)
-	if err != nil {
-		return nil, err
-	}
+	// // not fully stable but close to olivere/elastic unofficial implementation.
+	// tes, err := elasticsearch.NewTypedClient(elasticsearch.Config{
+	// 	Addresses: []string{url},
+	// })
+	//
+	// fmt.Print(res)
+	//
+	// // return &elasticRepository{
+	// // 	client: es,
+	//
+	// // }, nil
+	//
+	// // not official
+	// client, err := elastic.NewClient(
+	// 	// SetURL defines the URL endpoints of the Elasticsearch nodes.
+	// 	elastic.SetURL(url),
+	// 	// "sniffing" in the context of Elasticsearch client libraries,
+	// 	// it refers to the ability of these clients to dynamically discover and connect to nodes in an Elasticsearch cluster.
+	// 	// This feature helps clients maintain connections to the cluster even if individual nodes change or become unavailable.
+	// 	elastic.SetSniff(false),
+	// )
+	// if err != nil {
+	// 	return nil, err
+	// }
 
 	return &elasticRepository{
-		client:    es,
-		tes:       tes,
-		clientdep: client,
+		client: es,
+		// tes:       tes,
+		// clientdep: client,
 	}, nil
 }
