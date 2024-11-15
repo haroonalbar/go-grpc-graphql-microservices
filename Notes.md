@@ -1,5 +1,4 @@
-
-## Notes
+## Notes for myself
 
 - Define graphql schema
 - Define account model
@@ -87,5 +86,17 @@ go run .
 ```
 
 - Go to grahql playground
+<http://localhost:8080/playground>
 
-> <http://localhost:8080/playground>
+- Docker:
+- Make sure docker daemon is running
+- In my case OrbStack (you can also use Docker desktop)
+
+- compose docker
+
+```bash
+docker-compse up -d --build
+```
+
+- Lot of things went wrong
+- had to debug and fix a lot of things

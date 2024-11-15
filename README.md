@@ -50,4 +50,6 @@ cd graphql
 go run .
 ```
 
-### [Step by step Notes🔗](/Notes.md)
+### [Step by step Notes 🔗](/Notes.md)
+
+### [Usage 🔗](/Usage.md)
