@@ -6,7 +6,7 @@ COPY vendor vendor
 COPY account account
 RUN GO111MODULE=on go build -mod vendor -o /go/bin/app ./account/cmd/account
 
-FROM alpine:3.11
+FROM alpine:3.20
 WORKDIR /usr/bin
 COPY --from=build /go/bin .
 EXPOSE 8080
