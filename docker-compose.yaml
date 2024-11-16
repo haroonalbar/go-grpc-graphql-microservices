@@ -6,7 +6,7 @@ services:
     depends_on:
       - account_db
     environment:
-      DATABASE_URL: postgres://haroonalbar:000000@account_db/haroonalbar?sslmode=disable
+      DATABASE_URL: postgres://haroonalbar:123456@account_db/haroonalbar?sslmode=disable
     restart: on-failure
 
   catalog:
@@ -15,7 +15,10 @@ services:
       dockerfile: ./catalog/app.dockerfile
     depends_on:
       - catalog_db
+      # catalog_db:
+      #   condition: service_healthy  # Wait for catalog_db to be healthy
     environment:
+      # DATABASE_URL: https://catalog_db:9200
       DATABASE_URL: http://catalog_db:9200
     restart: on-failure
 
@@ -26,7 +29,7 @@ services:
     depends_on:
       - order_db
     environment:
-      DATABASE_URL: postgres://haroonalbar:000000@order_db/haroonalbar?sslmode=disable
+      DATABASE_URL: postgres://haroonalbar:123456@order_db/haroonalbar?sslmode=disable
       ACCOUNT_SERVICE_URL: account:8080
       CATALOG_SERVICE_URL: catalog:8080
     restart: on-failure
@@ -53,14 +56,23 @@ services:
     environment:
       POSTGRES_DB: haroonalbar
       POSTGRES_USER: haroonalbar
-      POSTGRES_PASSWORD: 000000
+      POSTGRES_PASSWORD: 123456
     restart: unless-stopped
 
   catalog_db:
-    image: docker.elastic.co/elasticsearch/elasticsearch:8.12.1
+    image: docker.elastic.co/elasticsearch/elasticsearch:6.2.4
+    # image: docker.elastic.co/elasticsearch/elasticsearch:8.16.0
     environment:
       ES_JAVA_OPTS: -Xms1g -Xmx1g
       discovery.type: single-node
+      # ES_JAVA_OPTS: -Xms2g -Xmx2g  # Increase memory allocation
+      # logger.org.elasticsearch: DEBUG  # Enable debug logging
+    # healthcheck:
+    #   test: ["CMD", "curl", "-f", "https://localhost:9200"]
+    #   interval: 60s
+    #   timeout: 30s
+    #   retries: 5
+
 
   order_db:
     build:
@@ -69,5 +81,5 @@ services:
     environment:
       POSTGRES_DB: haroonalbar
       POSTGRES_USER: haroonalbar
-      POSTGRES_PASSWORD: 000000
+      POSTGRES_PASSWORD: 123456
     restart: unless-stopped
