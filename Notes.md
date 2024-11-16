@@ -99,4 +99,15 @@ docker-compse up -d --build
 ```
 
 - Lot of things went wrong
-- had to debug and fix a lot of things
+- had to debug and fix a lot of things like ports and stuff
+- fix docker compose up not working cause of low resources
+- allocated more resource to docker
+- fix grpc not working properly implemented depricated Dail() to fix it
+- fixed password not properly set on postgres dbs
+
+```bash
+docker-compose down
+docker-compose up -d --build
+```
+- debugging elasticseach db
+- cleand up repostory catalog of all typed and unofficial implementation
