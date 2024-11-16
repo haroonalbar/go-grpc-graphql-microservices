@@ -31,8 +31,7 @@ func ListenGRPC(s Service, port int) error {
 	pb.RegisterCatalogServiceServer(
 		serv,
 		&grpcServer{
-			service:                           s,
-			UnimplementedCatalogServiceServer: pb.UnimplementedCatalogServiceServer{},
+			service: s,
 		},
 	)
 

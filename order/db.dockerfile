@@ -4,7 +4,7 @@
 # 3. Run PostgreSQL server when started
 #
 # This is commonly used when you want to create a PostgreSQL container with a pre-initialized database structure or data.
-FROM  postgres:10.3
+FROM postgres:10.3
 #    - This is the base image declaration
 #    - It pulls the official PostgreSQL image version 10.3 from Docker Hub
 #    - This will be used as the starting point for your custom image

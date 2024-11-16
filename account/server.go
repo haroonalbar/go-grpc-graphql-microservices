@@ -32,8 +32,7 @@ func ListenGRPC(s Service, port int) error {
 	// Registers the server for reflection (useful for debugging and service discovery).
 	reflection.Register(serv)
 	pb.RegisterAccountServiceServer(serv, &grpcServer{
-		service:                           s,
-		UnimplementedAccountServiceServer: pb.UnimplementedAccountServiceServer{},
+		service: s,
 	})
 	// Starts serving gRPC requests.
 	return serv.Serve(lis)

@@ -33,8 +33,8 @@ func main() {
 	})
 	// Ensure repository connection is closed when main function exits
 	defer r.Close()
-	log.Println("Listening on port: 8080")
 
+	log.Println("Listening on port: 8080")
 	// Create new catalog service with the repository
 	s := catalog.NewService(r)
 	// Start gRPC server on port 8080

@@ -10,4 +10,4 @@ CREATE TABLE IF NOT EXISTS order_products (
     product_id CHAR(27),
     quantity INT NOT NULL,
     PRIMARY KEY (product_id, order_id)
-)
+);

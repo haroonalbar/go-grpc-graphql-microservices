@@ -6,7 +6,6 @@ import (
 
 	"github.com/haroonalbar/go-grpc-graphql-microservices/order/pb"
 	"google.golang.org/grpc"
-	"google.golang.org/grpc/credentials/insecure"
 )
 
 type Client struct {
@@ -16,7 +15,8 @@ type Client struct {
 
 func NewClient(url string) (*Client, error) {
 	// NOTE: used NewClient instead of depricated Dial
-	conn, err := grpc.NewClient(url, grpc.WithTransportCredentials(insecure.NewCredentials()))
+	conn, err := grpc.Dial(url, grpc.WithInsecure())
+	// conn, err := grpc.NewClient(url, grpc.WithTransportCredentials(insecure.NewCredentials()))
 	if err != nil {
 		return nil, err
 	}
