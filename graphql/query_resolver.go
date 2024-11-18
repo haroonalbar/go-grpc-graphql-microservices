@@ -59,7 +59,7 @@ func (r *queryResolver) Products(ctx context.Context, pagination *PaginationInpu
 	ctx, cancel := context.WithTimeout(ctx, 3*time.Second)
 	defer cancel()
 	// single
-	if *id != "" {
+	if id != nil && *id != "" {
 		p, err := r.server.catalogClient.GetProduct(ctx, *id)
 		if err != nil {
 			log.Println("Error getting product from catalog client : ", err)
@@ -74,7 +74,7 @@ func (r *queryResolver) Products(ctx context.Context, pagination *PaginationInpu
 	}
 
 	// multiple
-	var skip, take uint64
+	skip, take := uint64(0), uint64(0)
 	if pagination != nil {
 		skip, take = pagination.bounds()
 	}
@@ -93,6 +93,7 @@ func (r *queryResolver) Products(ctx context.Context, pagination *PaginationInpu
 		log.Println("Error getting products from catalog client: ", err)
 		return nil, err
 	}
+	log.Printf("Number of products returned: %d", len(productList))
 
 	var products []*Product
 	for _, p := range productList {
