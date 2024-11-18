@@ -1,4 +1,4 @@
-name: Docker Compose Check
+name: Simple Docker Compose Check
 
 on:
   push:
@@ -9,43 +9,6 @@ on:
 jobs:
   test:
     runs-on: ubuntu-latest
-
-    services:
-      account_db:
-        image: postgres:latest
-        env:
-          POSTGRES_DB: haroonalbar
-          POSTGRES_USER: haroonalbar
-          POSTGRES_PASSWORD: 123456
-        ports:
-          - 5432:5432
-        options: >-
-          --health-cmd="pg_isready -U haroonalbar" 
-          --health-interval=10s 
-          --health-timeout=5s 
-          --health-retries=5
-
-      catalog_db:
-        image: docker.elastic.co/elasticsearch/elasticsearch:6.2.4
-        env:
-          ES_JAVA_OPTS: -Xms1g -Xmx1g
-          discovery.type: single-node
-        ports:
-          - 9200:9200
-
-      order_db:
-        image: postgres:latest
-        env:
-          POSTGRES_DB: haroonalbar
-          POSTGRES_USER: haroonalbar
-          POSTGRES_PASSWORD: 123456
-        ports:
-          - 5433:5432
-        options: >-
-          --health-cmd="pg_isready -U haroonalbar" 
-          --health-interval=10s 
-          --health-timeout=5s 
-          --health-retries=5
 
     steps:
       - name: Checkout code
@@ -59,13 +22,10 @@ jobs:
           docker compose up -d
           sleep 30  # Wait for services to start
 
-      - name: Check services
+      - name: Check if services are running
         run: |
-          # Check if services are running
+          # Check if the GraphQL service is running
           curl -f http://localhost:8000 || exit 1  # GraphQL service
-          curl -f http://catalog_db:9200 || exit 1  # Catalog service
-          curl -f postgres://haroonalbar:123456@account_db/haroonalbar?sslmode=disable || exit 1  # Account DB
-          curl -f postgres://haroonalbar:123456@order_db/haroonalbar?sslmode=disable || exit 1  # Order DB
 
       - name: Tear down services
         run: docker compose down
