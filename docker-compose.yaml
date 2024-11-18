@@ -60,19 +60,18 @@ services:
     restart: unless-stopped
 
   catalog_db:
-    image: docker.elastic.co/elasticsearch/elasticsearch:6.2.4
-    # image: docker.elastic.co/elasticsearch/elasticsearch:8.16.0
+    image: docker.elastic.co/elasticsearch/elasticsearch:6.2.4 # image: docker.elastic.co/elasticsearch/elasticsearch:8.16.0
     platform: linux/amd64
     environment:
       ES_JAVA_OPTS: -Xms1g -Xmx1g
       discovery.type: single-node
       # ES_JAVA_OPTS: -Xms2g -Xmx2g  # Increase memory allocation
       # logger.org.elasticsearch: DEBUG  # Enable debug logging
-    # healthcheck:
-    #   test: ["CMD", "curl", "-f", "https://localhost:9200"]
-    #   interval: 60s
-    #   timeout: 30s
-    #   retries: 5
+      # healthcheck:
+      #   test: ["CMD", "curl", "-f", "https://localhost:9200"]
+      #   interval: 60s
+      #   timeout: 30s
+      #   retries: 5
 
 
   order_db:

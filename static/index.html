@@ -1,0 +1,197 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Microservices Frontend</title>
+    <link href="https://cdn.jsdelivr.net/npm/tailwindcss@2.2.19/dist/tailwind.min.css" rel="stylesheet">
+    <script src="https://unpkg.com/htmx.org@1.9.3"></script>
+</head>
+<body class="bg-gray-100 font-sans">
+    <div class="container mx-auto p-6">
+        <h1 class="text-3xl font-bold mb-4">Microservices Frontend</h1>
+
+        <!-- Create Account Form -->
+        <div class="bg-white shadow-md rounded-lg p-6 mb-6">
+            <h2 class="text-2xl font-semibold mb-4">Create Account</h2>
+            <form id="create-account-form" class="space-y-4">
+                <input type="text" id="account-name" placeholder="Account Name" required class="border border-gray-300 p-2 w-full rounded">
+                <button type="submit" class="bg-blue-500 text-white p-2 rounded hover:bg-blue-600">Create Account</button>
+            </form>
+            <div id="account-response" class="mt-4"></div>
+        </div>
+
+        <!-- Create Product Form -->
+        <div class="bg-white shadow-md rounded-lg p-6 mb-6">
+            <h2 class="text-2xl font-semibold mb-4">Create Product</h2>
+            <form id="create-product-form" class="space-y-4">
+                <input type="text" id="product-name" placeholder="Product Name" required class="border border-gray-300 p-2 w-full rounded">
+                <input type="text" id="product-description" placeholder="Product Description" required class="border border-gray-300 p-2 w-full rounded">
+                <input type="number" id="product-price" placeholder="Product Price" required class="border border-gray-300 p-2 w-full rounded">
+                <button type="submit" class="bg-blue-500 text-white p-2 rounded hover:bg-blue-600">Create Product</button>
+            </form>
+            <div id="product-response" class="mt-4"></div>
+        </div>
+
+        <!-- Create Order Form -->
+        <div class="bg-white shadow-md rounded-lg p-6 mb-6">
+            <h2 class="text-2xl font-semibold mb-4">Create Order</h2>
+            <form id="create-order-form" class="space-y-4">
+                <input type="text" id="order-account-id" placeholder="Account ID" required class="border border-gray-300 p-2 w-full rounded">
+                <input type="text" id="order-product-id" placeholder="Product ID" required class="border border-gray-300 p-2 w-full rounded">
+                <input type="number" id="order-quantity" placeholder="Quantity" required class="border border-gray-300 p-2 w-full rounded">
+                <button type="submit" class="bg-blue-500 text-white p-2 rounded hover:bg-blue-600">Create Order</button>
+            </form>
+            <div id="order-response" class="mt-4"></div>
+        </div>
+
+        <!-- Query Accounts -->
+        <div class="bg-white shadow-md rounded-lg p-6 mb-6">
+            <h2 class="text-2xl font-semibold mb-4">Query Accounts</h2>
+            <button id="query-accounts" class="bg-green-500 text-white p-2 rounded hover:bg-green-600">Fetch Accounts</button>
+            <div id="accounts-response" class="mt-4"></div>
+        </div>
+
+        <!-- Query Products -->
+        <div class="bg-white shadow-md rounded-lg p-6 mb-6">
+            <h2 class="text-2xl font-semibold mb-4">Query Products</h2>
+            <div>
+                <input type="text" id="product-search-term" placeholder="Search term" />
+                <input type="number" id="product-skip" placeholder="Skip" />
+                <input type="number" id="product-take" placeholder="Take" />
+                <button id="query-products" class="bg-green-500 text-white p-2 rounded hover:bg-green-600">Query Products</button>
+            </div>
+            <div id="products-response" class="mt-4"></div>
+        </div>
+    </div>
+
+    <script>
+        // Function to send GraphQL requests
+        function sendGraphQLRequest(query, targetElementId) {
+            fetch('http://localhost:8000/graphql', {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/json',
+                },
+                body: JSON.stringify({ query }),
+            })
+            .then(response => response.json())
+            .then(data => {
+                if (targetElementId === 'accounts-response') {
+                    const accounts = data.data.accounts;
+                    let tableHTML = '<table class="min-w-full border-collapse border border-gray-300"><thead><tr><th class="border border-gray-300 p-2">ID</th><th class="border border-gray-300 p-2">Name</th></tr></thead><tbody>';
+                    accounts.forEach(account => {
+                        tableHTML += `<tr><td class="border border-gray-300 p-2">${account.id}</td><td class="border border-gray-300 p-2">${account.name}</td></tr>`;
+                    });
+                    tableHTML += '</tbody></table>';
+                    document.getElementById(targetElementId).innerHTML = tableHTML;
+                } else if (targetElementId === 'products-response') {
+                    if (data.errors) {
+                        document.getElementById(targetElementId).innerHTML = `<p class="text-red-500">Error: ${data.errors[0].message}</p>`;
+                    } else {
+                        const products = data.data.products;
+                        let tableHTML = '<table class="min-w-full border-collapse border border-gray-300"><thead><tr><th class="border border-gray-300 p-2">ID</th><th class="border border-gray-300 p-2">Name</th><th class="border border-gray-300 p-2">Description</th><th class="border border-gray-300 p-2">Price</th></tr></thead><tbody>';
+                        products.forEach(product => {
+                            tableHTML += `<tr><td class="border border-gray-300 p-2">${product.id}</td><td class="border border-gray-300 p-2">${product.name}</td><td class="border border-gray-300 p-2">${product.description}</td><td class="border border-gray-300 p-2">${product.price}</td></tr>`;
+                        });
+                        tableHTML += '</tbody></table>';
+                        document.getElementById(targetElementId).innerHTML = tableHTML;
+                    }
+                } else {
+                    document.getElementById(targetElementId).innerHTML = JSON.stringify(data, null, 2);
+                }
+            })
+            .catch(error => {
+                console.error('Error:', error);
+                document.getElementById(targetElementId).innerHTML = `<p class="text-red-500">An error occurred. Please try again.</p>`;
+            });
+        }
+
+        // Create Account
+        document.getElementById('create-account-form').addEventListener('submit', function(event) {
+            event.preventDefault();
+            const accountName = document.getElementById('account-name').value;
+            const query = `
+                mutation {
+                    createAccount(account: {name: "${accountName}"}) {
+                        id
+                        name
+                    }
+                }
+            `;
+            sendGraphQLRequest(query, 'account-response');
+        });
+
+        // Create Product
+        document.getElementById('create-product-form').addEventListener('submit', function(event) {
+            event.preventDefault();
+            const productName = document.getElementById('product-name').value;
+            const productDescription = document.getElementById('product-description').value;
+            const productPrice = document.getElementById('product-price').value;
+            const query = `
+                mutation {
+                    createProduct(product: {name: "${productName}", description: "${productDescription}", price: ${productPrice}}) {
+                        id
+                        name
+                        price
+                    }
+                }
+            `;
+            sendGraphQLRequest(query, 'product-response');
+        });
+
+        // Create Order
+        document.getElementById('create-order-form').addEventListener('submit', function(event) {
+            event.preventDefault();
+            const accountId = document.getElementById('order-account-id').value;
+            const productId = document.getElementById('order-product-id').value;
+            const quantity = document.getElementById('order-quantity').value;
+            const query = `
+                mutation {
+                    createOrder(order: {accountId: "${accountId}", products: [{id: "${productId}", quantity: ${quantity}}]}) {
+                        id
+                        totalPrice
+                        products {
+                            name
+                            quantity
+                        }
+                    }
+                }
+            `;
+            sendGraphQLRequest(query, 'order-response');
+        });
+
+        // Query Accounts
+        document.getElementById('query-accounts').addEventListener('click', function() {
+            const query = `
+                query {
+                    accounts {
+                        id
+                        name
+                    }
+                }
+            `;
+            sendGraphQLRequest(query, 'accounts-response');
+        });
+
+        // Query Products
+        document.getElementById('query-products').addEventListener('click', function() {
+            const searchTerm = document.getElementById('product-search-term').value;
+            const skip = parseInt(document.getElementById('product-skip').value) || 0;
+            const take = parseInt(document.getElementById('product-take').value) || 5;
+
+            const query = `
+                query {
+                    products(pagination: {skip: ${skip}, take: ${take}}, query: "${searchTerm}") {
+                        id
+                        name
+                        description
+                        price
+                    }
+                }
+            `;
+            sendGraphQLRequest(query, 'products-response');
+        });
+    </script>
+</body>
+</html>

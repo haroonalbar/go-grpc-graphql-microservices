@@ -7,11 +7,12 @@ COPY account account
 COPY catalog catalog
 COPY order order
 COPY graphql graphql
+COPY static static
 RUN GO111MODULE=on go build -mod vendor -o /go/bin/app ./graphql
-
 
 FROM alpine:3.20
 WORKDIR /usr/bin
+COPY static static
 COPY --from=build /go/bin .
 EXPOSE 8080
 CMD [ "app" ]

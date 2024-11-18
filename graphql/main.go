@@ -69,6 +69,7 @@ func main() {
 	// // provides a web-based GraphQL Playground interface for easy testing and exploration of the GraphQL API.
 	// mux.Handle("/playground", playground.Handler("play", "/graphql"))
 	//
+	http.Handle("/", http.FileServer(http.Dir("./static")))
 
 	http.Handle("/graphql", handler.GraphQL(s.ToExecutableSchema()))
 	http.Handle("/playground", handler.Playground("play", "/graphql"))
