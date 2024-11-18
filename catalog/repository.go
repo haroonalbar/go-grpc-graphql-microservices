@@ -405,10 +405,19 @@ func (r *elasticRepository) SearchProducts(ctx context.Context, query string, sk
 	// return products, nil
 
 	// unofficial
+	// res, err := r.clientdep.Search().
+	// 	Index("catalog").
+	// 	Type("product").
+	// 	Query(elastic.NewMultiMatchQuery(query, "name", "description")).
+	// 	From(int(skip)).Size(int(take)).
+	// 	Do(ctx)
 	res, err := r.clientdep.Search().
 		Index("catalog").
 		Type("product").
-		Query(elastic.NewMultiMatchQuery(query, "name", "description")).
+		Query(elastic.NewBoolQuery().Should(
+			elastic.NewWildcardQuery("description", query+"*"),
+			elastic.NewWildcardQuery("name", query+"*"),
+		)).
 		From(int(skip)).Size(int(take)).
 		Do(ctx)
 	if err != nil {
