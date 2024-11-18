@@ -6,12 +6,12 @@ This project demonstrates a microservices architecture utilizing gRPC for inter-
 
 ## Technologies Used
 
-- **Go**: The primary programming language for building the microservices.
+- [**Go**](https://golang.org/): The primary programming language for building the microservices.
 - [**gRPC**](https://grpc.io/docs/): A high-performance RPC framework for communication between services.
 - [**GraphQL**](https://graphql.org/learn/): A query language for APIs, providing a more efficient and flexible alternative to REST.
-- **Elasticsearch**: A distributed search and analytics engine used for the catalog service.
-- **PostgreSQL**: A relational database used for account and order services.
-- **Docker**: For containerization and orchestration of services.
+- [**Elasticsearch**](https://www.elastic.co/): A distributed search and analytics engine used for the catalog service.
+- [**PostgreSQL**](https://www.postgresql.org/): A relational database used for account and order services.
+- [**Docker**](https://www.docker.com/): For containerization and orchestration of services.
 
 ## Project Structure
 
@@ -165,7 +165,7 @@ query {
 
 To generate gRPC files, follow these steps:
 
-1. Download and install `protoc`: <https://grpc.io/docs/protoc-installation/>
+1. Download and install [protoc](https://grpc.io/docs/protoc-installation)
 
 2. Install the necessary Go plugins:
 
