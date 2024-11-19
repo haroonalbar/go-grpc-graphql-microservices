@@ -129,7 +129,7 @@ func (r *postgresRepository) GetOrderForAccount(ctx context.Context, accountID s
 		o.id,
 		o.created_at,
 		o.account_id,
-		o.total_price::money::numeric::float8,  // Convert money to float8
+		o.total_price::money::numeric::float8,
 		op.product_id,
 		op.quantity
 		FROM orders o JOIN order_products op ON(o.id = op.order_id)
